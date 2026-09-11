@@ -26,6 +26,31 @@ area: hub
 - Staging comprovou a criação Hub-first: empresa criada no Core apareceu no Hub com o mesmo tenant e produto `volt_core` ativo; usuário criado no Core gerou vínculo e convite pendentes no Hub.
 - No master do Core, empresa é seleção obrigatória ao criar usuário. Isso evita um vínculo acidental com a primeira empresa da lista.
 
+## Worker e configuração ativa
+
+- Worker em uso: `paymentcontrol`, publicado em `https://paymentcontrol.davantti-suite.workers.dev`.
+- Ambiente do Worker: `paymentcontrol`, com `ENVIRONMENT=production`, `PAYMENT_PROVIDER=asaas` e API Asaas produtiva.
+- Portal administrativo: `/ops-portal`; URL pública do Hub: `https://paymentcontrol.davantti-suite.workers.dev`.
+- O Worker não herda projetos e integrações do Hub legado: os identificadores externos de ML, Shopee, Rastreio, Madeira e Skuleader estão vazios nesse ambiente.
+- Agendamentos ativos no Worker: a cada 5 minutos e diariamente às `09:17`.
+- `HUB_ACCESS_ENFORCEMENT_MODE=monitor` no Worker registra e permite observar a transição das políticas. Já os containers DACH usam `HUB_LOGIN_MODE=strict`, `HUB_AUTH_MODE=strict` e `HUB_ENFORCEMENT=strict`, portanto tratam o Hub como autoridade de login e acesso.
+
+### Secrets presentes no Worker
+
+Os valores não são documentados aqui nem versionados. A lista de nomes foi conferida em 11/09/2026:
+
+- Administração: `ADMIN_PASSWORD_HASH`, `ADMIN_PASSWORD_SALT`, `ADMIN_SESSION_SECRET`.
+- Hub interno: `HUB_INTERNAL_TOKEN`.
+- Banco: `NEON_DATABASE_URL`.
+- Asaas: `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `RENEWAL_INTENT_SECRET`.
+- E-mail: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`.
+
+### Contrato do DACH com o Hub
+
+- `HUB_BASE_URL=https://paymentcontrol.davantti-suite.workers.dev`.
+- `HUB_INTERNAL_TOKEN` deve ter o mesmo valor configurado como secret no Worker, sem ser exibido em logs, Git ou Obsidian.
+- O arquivo da VPS é `infra/env/hub.env`, fora do Git e com permissão `600`.
+
 ## Relações
 
 - [[Hub]]
