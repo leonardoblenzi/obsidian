@@ -13,6 +13,12 @@ status: ativo
 - Log: `apps/seller-log/`.
 - Leader: `apps/seller-leader/`.
 
+## Variáveis de acesso compartilhadas
+
+- Madeira, Rastreio, Log e Leader usam a integração central `HUB_BASE_URL`, `HUB_INTERNAL_TOKEN`, `HUB_LOGIN_MODE` e `HUB_AUTH_MODE`.
+- No Rastreio, `MASTER_ADMIN_EMAIL` é uma referência legada do código; o ambiente atual não a define e o master de staging é liberado pelo escopo `tracking` do Hub.
+- A lista completa de variáveis e o procedimento de mudança estão em [[Inventário de variáveis — Hub e staging]].
+
 ## Relações
 
 - [[Mercado Livre]]

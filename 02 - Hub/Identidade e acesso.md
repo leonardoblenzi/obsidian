@@ -29,8 +29,10 @@ area: hub
 ## Worker e configuração ativa
 
 - Worker em uso: `paymentcontrol`, publicado em `https://paymentcontrol.davantti-suite.workers.dev`.
+- Repositório de origem: `hubPagamentos`; a configuração do Worker ativo está na branch Git `payment` (`[env.paymentcontrol]` em `wrangler.toml`). O `name` padrão `hub-pagamento` é outro Worker e não deve ser confundido com o Hub usado pelo staging.
 - Ambiente do Worker: `paymentcontrol`, com `ENVIRONMENT=production`, `PAYMENT_PROVIDER=asaas` e API Asaas produtiva.
 - Portal administrativo: `/ops-portal`; URL pública do Hub: `https://paymentcontrol.davantti-suite.workers.dev`.
+- Banco do ambiente `paymentcontrol`: branch Neon `paymentcontrol-pilot-20260910`, criada a partir de `040926branch` para o piloto isolado. A URL continua exclusivamente no secret `NEON_DATABASE_URL` do Cloudflare; ela não é versionada nem deve ser copiada para esta nota.
 - O Worker não herda projetos e integrações do Hub legado: os identificadores externos de ML, Shopee, Rastreio, Madeira e Skuleader estão vazios nesse ambiente.
 - Agendamentos ativos no Worker: a cada 5 minutos e diariamente às `09:17`.
 - `HUB_ACCESS_ENFORCEMENT_MODE=monitor` no Worker registra e permite observar a transição das políticas. Já os containers DACH usam `HUB_LOGIN_MODE=strict`, `HUB_AUTH_MODE=strict` e `HUB_ENFORCEMENT=strict`, portanto tratam o Hub como autoridade de login e acesso.
@@ -45,17 +47,30 @@ Os valores não são documentados aqui nem versionados. A lista de nomes foi con
 - Asaas: `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `RENEWAL_INTENT_SECRET`.
 - E-mail: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`.
 
+### Checkpoint da conexão Neon
+
+- Em 13/09/2026, `NEON_DATABASE_URL` do Worker `paymentcontrol` foi rotacionada para a conexão da branch `paymentcontrol-pilot-20260910` e promovida na versão Cloudflare `c6b67479` com 100% do tráfego.
+- O valor da conexão não é exibido nem documentado. A branch, o projeto e o papel de cada variável estão em [[Inventário de variáveis — Hub e staging]].
+
 ### Contrato do DACH com o Hub
 
 - `HUB_BASE_URL=https://paymentcontrol.davantti-suite.workers.dev`.
 - `HUB_INTERNAL_TOKEN` deve ter o mesmo valor configurado como secret no Worker, sem ser exibido em logs, Git ou Obsidian.
 - O arquivo da VPS é `infra/env/hub.env`, fora do Git e com permissão `600`.
 
+### Masters de módulo no checkpoint de staging
+
+- O portal do Hub mantém operadores com escopo de **responsável por módulo**; cada master enxerga somente o módulo liberado na seleção de plataforma.
+- Escopos confirmados: master de Mercado Livre → `ml`; master de Shopee → `shopee`; master de Rastreio → `tracking`; master do Volt Core → `volt_core`.
+- O cadastro de operador no `/ops-portal` define escopo e módulos, mas não grava senha global. A credencial global é controlada pelo fluxo de identidade/recuperação de senha do Hub na branch Neon ativa.
+- O Volt Core também possui bootstrap local do master por variáveis `VOLT_CORE_BOOTSTRAP_MASTER_*`. Isso garante a credencial administrativa local do Core, mas não substitui nem altera a senha global armazenada pelo Hub.
+
 ## Relações
 
 - [[Hub]]
 - [[Gateway]]
 - [[Compatibilidade durante a migração]]
+- [[Inventário de variáveis — Hub e staging]]
 
 ## Próxima validação
 
