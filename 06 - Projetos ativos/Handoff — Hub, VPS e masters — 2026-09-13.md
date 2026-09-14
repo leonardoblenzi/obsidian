@@ -56,7 +56,9 @@ O commit inicial do novo repositório contém o estado rastreado do checkout ant
 - Foram publicadas páginas próprias para Mercado Livre, Shopee e Rastreio, além da página geral Seller.
 - Rotas verificadas com HTTP `200`: `/seller`, `/seller/mercado-livre`, `/seller/shopee`, `/seller/rastreio`, `/seller-assets/seller-landing.css` e `/login`.
 - A estrutura e os links de entrada de cada módulo foram conferidos no navegador integrado.
-- Implementação no commit `20d7807` (`feat: padronizar landings da linha seller`). O gateway foi reconstruído e ficou `healthy`.
+- Após revisão, a arquitetura visual foi aproximada da Business: menu superior com acesso direto a Mercado Livre, Shopee e Rastreio em todas as páginas, faixa operacional, cards comparáveis com capacidades e jornada venda → margem → entrega.
+- O menu responsivo abre e fecha corretamente e mantém os três módulos disponíveis. Um clique real pelo topo para Mercado Livre foi validado no navegador.
+- Implementação inicial no commit `20d7807`; revisão publicada no commit `1000c8f` (`feat: aproximar landings seller da navegacao business`). O gateway foi reconstruído e ficou `healthy`.
 
 ### Worker e Neon
 

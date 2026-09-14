@@ -27,6 +27,7 @@ status: staging-ativo
 
 - O gateway foi reconstruído a partir de `dachbyte/main` e ficou `healthy`.
 - Estão publicadas as rotas `/seller`, `/seller/mercado-livre`, `/seller/shopee` e `/seller/rastreio`; o CSS compartilhado é servido em `/seller-assets/seller-landing.css`.
+- A revisão `1000c8f` adiciona navegação superior direta entre os três módulos, estado ativo nas páginas específicas, menu móvel acessível, faixa operacional e maior profundidade nos cards da landing geral.
 - O deploy não adicionou variáveis novas. Ele preserva os arquivos não versionados em `/opt/dachbyte/repository/infra/env/` e os fluxos existentes, incluindo `HUB_BASE_URL`, `HUB_INTERNAL_TOKEN`, `ML_PUBLIC_ORIGIN`, `ML_REDIRECT_URI`, `ML_BOOTSTRAP_MASTER_*`, `SHOPEE_*`, `SUPER_ADMIN_PASSWORD` e `VOLT_CORE_BOOTSTRAP_MASTER_*`.
 - Backup do corte: `/opt/dachbyte/backups/new-main-20260914T014403Z`; branch de rollback: `rollback/dach-before-new-main-20260914T014403Z`.
 
