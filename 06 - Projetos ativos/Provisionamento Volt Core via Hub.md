@@ -44,6 +44,7 @@ Fazer do Hub `paymentcontrol` a fonte de verdade de empresa, usuário, acesso e 
 - Foi identificada uma divergência de histórico: o banco piloto já possuía a migration 053, mas a branch Git `payment` não continha o commit de origem `cbc65bc` nem a migration.
 - A correção foi um cherry-pick exclusivo de `cbc65bc` para `payment`, resultando em `2973136`. Não foi feito merge de `dev` e nenhuma migration foi reaplicada no banco.
 - A validação posterior passou com `58/58` testes de identidade e TypeScript sem erros.
+- A revisão reconciliada foi publicada manualmente em 14/09/2026 no Worker `paymentcontrol`, versão `b01bf28e-f318-4404-bbb0-ec37d6a1af63`. O Wrangler confirmou 100% do tráfego e `GET /health` retornou `200 OK` em `production`.
 
 ## Evidência integrada de staging
 

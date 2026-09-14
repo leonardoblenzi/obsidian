@@ -58,6 +58,7 @@ Os valores não são documentados aqui nem versionados. A lista de nomes foi con
 - A branch Git `payment` estava defasada: não continha o commit `cbc65bc` nem o arquivo `sql/053_internal_identity_provisioning.sql`, embora o banco já estivesse atualizado.
 - A correção foi o cherry-pick pontual de `cbc65bc` em `payment`, gerando o commit `2973136` (`Provision Volt Core identities through Hub`). Não houve merge de mudanças adicionais de `dev`.
 - Nenhuma migration foi executada novamente no Neon: a ação alinhou somente o histórico do código ao estado já existente do banco. Após o alinhamento, a suíte de identidade passou `58/58` e o TypeScript foi aprovado.
+- Em 14/09/2026, a revisão reconciliada foi publicada manualmente no Worker `paymentcontrol` como versão Cloudflare `b01bf28e-f318-4404-bbb0-ec37d6a1af63`, com 100% do tráfego segundo o Wrangler. A rota pública `/health` respondeu `200 OK` com `environment=production`.
 
 ### Contrato do DACH com o Hub
 
