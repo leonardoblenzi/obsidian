@@ -12,7 +12,7 @@ Use esta nota como ponto de retomada em outro chat. Ela descreve o estado **já 
 
 O staging Dachbyte está saudável na VPS, todos os módulos apontam para o Hub Cloudflare `paymentcontrol`, e esse Worker está conectado à branch Neon piloto `paymentcontrol-pilot-20260910`.
 
-O Core foi exercitado no navegador com uma empresa de QA, incluindo cadastro, venda, baixa de estoque, pagamento e recibo; o repositório `dachbyte` passou a ser a origem Git da nova etapa, enquanto a VPS ainda usa o checkout histórico até haver um corte planejado.
+O Core foi exercitado no navegador com uma empresa de QA, incluindo cadastro, venda, baixa de estoque, pagamento e recibo. O repositório `dachbyte/main` já é a origem Git do staging na VPS e o primeiro deploy dessa nova etapa publicou as landings enxutas da linha Seller.
 
 ## Topologia ativa
 
@@ -20,7 +20,7 @@ O Core foi exercitado no navegador com uma empresa de QA, incluindo cadastro, ve
 | --- | --- |
 | Staging público | `https://staging.dachbyte.tech` |
 | VPS | Hostinger `srv1971387`; acesso SSH já validado. |
-| Repositório na VPS | `/opt/dachbyte/repository`, branch `dach`. |
+| Repositório na VPS | `/opt/dachbyte/repository`, branch `main`, remoto `dachbyte`. |
 | Repositório canônico da nova etapa | `git@github.com:leonardoblenzi/dachbyte.git`, branch `main`. |
 | Checkout local da nova etapa | `C:\\Users\\Administrator\\Documents\\Projetos\\Dachbyte`. |
 | Entrada da VPS | Caddy; serviços e bancos em Docker na rede privada. |
@@ -33,13 +33,13 @@ O Core foi exercitado no navegador com uma empresa de QA, incluindo cadastro, ve
 
 | Item | Estado atual | Regra de uso |
 | --- | --- | --- |
-| Repositório novo | `git@github.com:leonardoblenzi/dachbyte.git`, branch `main`, commit inicial `74f6dd8`. | É a origem canônica para o trabalho desta nova etapa. |
+| Repositório novo | `git@github.com:leonardoblenzi/dachbyte.git`, branch `main`; staging implantado em `20d7807`. | É a origem canônica para trabalho e deploy desta nova etapa. |
 | Checkout novo local | `C:\\Users\\Administrator\\Documents\\Projetos\\Dachbyte`. | Acompanha `origin/main` por SSH. |
 | Repositório histórico | `davanttiSuite`, branch de trabalho `dach`. | Preservado como referência; não apagar nem reescrever. |
-| Checkout em produção de staging | `/opt/dachbyte/repository` na VPS, branch `dach`. | Continua servindo a stack até um plano de troca explícito para o repositório novo. |
+| Checkout do staging | `/opt/dachbyte/repository` na VPS, branch `main`, acompanhando `dachbyte/main`. | Usar para os próximos deploys de staging; preservar o remoto e branch históricos apenas para rollback. |
 | Arquivos de ambiente | `/opt/dachbyte/repository/infra/env/`. | Não são versionados e não devem ir para Git ou Obsidian. |
 
-O commit inicial do novo repositório contém o estado rastreado do checkout atual, sem valores de `.env` e sem trazer o histórico Git anterior. Antes de qualquer deploy a partir dele, validar CI, imagem/compose e a estratégia de corte da VPS.
+O commit inicial do novo repositório contém o estado rastreado do checkout anterior, sem valores de `.env` e sem trazer o histórico Git antigo. O primeiro corte foi validado em staging com backup dos ambientes, build do gateway e smoke tests HTTP.
 
 ## O que foi concluído
 
@@ -48,7 +48,15 @@ O commit inicial do novo repositório contém o estado rastreado do checkout atu
 - Foi criado o repositório independente `dachbyte` em `github.com/leonardoblenzi/dachbyte` para a nova etapa do projeto.
 - A versão atual rastreada no branch `dach` foi publicada como histórico inicial da nova `main`, no commit `74f6dd8` (`chore: iniciar repositorio dachbyte`).
 - O novo checkout local está em `C:\\Users\\Administrator\\Documents\\Projetos\\Dachbyte` e acompanha `origin/main` via SSH.
-- O repositório antigo `davanttiSuite` e o checkout operacional da VPS permanecem intactos. Antes de mudar a VPS para a nova origem, definir e executar um plano de corte separado.
+- A VPS foi cortada para `dachbyte/main` no commit `20d7807`; o remoto e uma branch local do estado anterior foram preservados para rollback.
+
+### Landings Seller
+
+- A landing geral foi padronizada com a tipografia da linha Business e a paleta atual da Seller, mantendo conteúdo curto e foco em conversão.
+- Foram publicadas páginas próprias para Mercado Livre, Shopee e Rastreio, além da página geral Seller.
+- Rotas verificadas com HTTP `200`: `/seller`, `/seller/mercado-livre`, `/seller/shopee`, `/seller/rastreio`, `/seller-assets/seller-landing.css` e `/login`.
+- A estrutura e os links de entrada de cada módulo foram conferidos no navegador integrado.
+- Implementação no commit `20d7807` (`feat: padronizar landings da linha seller`). O gateway foi reconstruído e ficou `healthy`.
 
 ### Worker e Neon
 
@@ -106,6 +114,7 @@ Os registros acima são dados de QA intencionais e devem permanecer enquanto for
 | --- | --- | --- |
 | Hub `paymentcontrol` | Worker ativo, ligação Neon piloto confirmada, portal acessível e quatro operadores internos com escopos isolados. | Validar o fluxo oficial de senha global dos operadores e acompanhar erros/métricas após uso contínuo. |
 | Gateway/seleção de plataforma | Sessão central e redirecionamento foram testados para ML, Shopee e Rastreio; cada master vê somente seu módulo. | Repetir teste completo com credenciais globais definitivas, incluindo Core, após a definição de senha no Hub. |
+| Landings Seller | Geral, ML, Shopee e Rastreio publicadas no staging; rotas, assets, títulos, CTAs e destinos dos módulos verificados. | Fazer revisão de conteúdo e responsividade com o usuário; depois medir conversão antes de acrescentar novas seções. |
 | Volt Core | Health `200`, master local, empresa QA e fluxo produto → cliente → PDV → estoque → pagamento → recibo testados no navegador. | Corrigir/definir a rota pública esperada para `/core/login` (hoje retorna `Cannot GET`); testar abertura/fechamento de caixa, recebível a prazo, permissões de usuário não-master e relatórios. |
 | Mercado Livre | Login/escopo central e rotas do módulo confirmados; origem e callback OAuth de staging configurados. | Executar OAuth real com conta de teste e testar leitura/atualização operacional no Mercado Livre. |
 | Shopee | Escopo central e entrada no módulo confirmados; schema reparado na base existente `dachbyte_shopee`; bootstrap sem senha fixa no código. | Executar OAuth/credenciais reais de loja de teste e validar sincronização/ações da Shopee. |
@@ -140,7 +149,7 @@ Arquivos de ambiente na VPS ficam em `/opt/dachbyte/repository/infra/env/` e nã
 3. **OAuth Mercado Livre:** validar o callback configurado em `ML_REDIRECT_URI`, confirmar `ML_PUBLIC_ORIGIN` e concluir uma autorização real de conta de teste no staging.
 4. **Integrações reais:** testar uma loja Shopee de teste e uma conta Avantracking de teste; registrar resultados e erros por módulo.
 5. **Backups:** concluir backup criptografado, retenção e teste de restauração para bancos VPS e plano de recuperação para o Hub/Neon.
-6. **Novo repositório e VPS:** decidir quando a VPS deixará o checkout histórico e passará a operar a partir do novo `dachbyte/main`; antes disso, validar build, compose, CI e rollback.
+6. **Pipeline do novo repositório:** o corte para `dachbyte/main` foi concluído manualmente; falta automatizar CI/deploy e testar formalmente o rollback.
 7. **Produção:** não há serviço Dachbyte de produção ativo. Não alterar DNS, tráfego, callbacks produtivos ou encerrar Render/Neon sem autorização específica.
 
 ## Próximos passos sugeridos, na ordem
@@ -149,21 +158,22 @@ Arquivos de ambiente na VPS ficam em `/opt/dachbyte/repository/infra/env/` e nã
 2. Ajustar a rota pública de login do Core e repetir o teste com um usuário operacional de QA, não apenas com o master.
 3. Executar OAuth real do Mercado Livre e da Shopee com contas de teste; registrar callback, permissões e primeira operação lida/escrita.
 4. Executar o smoke test dos serviços auxiliares e registrar evidências no respectivo tópico do vault.
-5. Rodar CI/testes no novo `dachbyte/main`, revisar os arquivos que fazem parte do bootstrap inicial e preparar um plano de corte da VPS com backup e rollback.
+5. Criar CI/deploy repetível para `dachbyte/main`, incluindo testes de arquitetura, smoke tests e procedimento de rollback.
 6. Só então abrir um plano separado para produção, com variáveis, DNS, segurança, monitoramento e restauração validados.
 
 ## Como verificar antes de avançar
 
 - No Cloudflare: Worker `paymentcontrol` → Deployments; confirmar versão ativa e 100% de tráfego.
 - No Neon: projeto `hubpagamento` → branch `paymentcontrol-pilot-20260910`; não selecionar `production` nem `040926branch` para mudanças de staging.
-- Na VPS: verificar serviços com `docker compose --env-file infra/env/compose.env -f infra/compose.vps.yml ps` dentro de `/opt/dachbyte/repository`.
+- Na VPS: confirmar branch `main`, commit esperado e serviços com `docker compose --env-file infra/env/compose.env -f infra/compose.vps.yml ps` dentro de `/opt/dachbyte/repository`.
 - No Hub: abrir `/ops-portal#operators` e conferir os quatro escopos de master.
 - No staging: verificar `https://staging.dachbyte.tech` e `https://staging.dachbyte.tech/core/healthz`.
+- Nas landings: verificar `/seller`, `/seller/mercado-livre`, `/seller/shopee` e `/seller/rastreio`.
 
 ## Rollback conhecido
 
 - **Worker:** a versão anterior `1aa57f70` continua no histórico do Cloudflare e pode ser promovida se a nova conexão apresentar falhas.
-- **VPS:** restaurar os arquivos de ambiente a partir do backup datado acima e recriar somente os serviços afetados.
+- **VPS/repositório:** o corte para `dachbyte/main` gerou o backup `/opt/dachbyte/backups/new-main-20260914T014403Z` e a branch local `rollback/dach-before-new-main-20260914T014403Z`; restaurar os ambientes do backup e reconstruir somente os serviços afetados.
 - **Shopee:** o dump anterior à reparação do schema está em `/opt/dachbyte/backups/dachbyte_shopee_before_schema_repair_20260913T133153Z.dump`.
 
 ## Relações

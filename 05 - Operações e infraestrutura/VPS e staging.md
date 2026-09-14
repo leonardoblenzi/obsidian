@@ -8,6 +8,7 @@ status: staging-ativo
 ## Fatos verificados
 
 - O staging está ativo na VPS `srv1971387`, com entrada pública em `https://staging.dachbyte.tech`.
+- O checkout operacional `/opt/dachbyte/repository` acompanha `git@github.com:leonardoblenzi/dachbyte.git`, branch `main`; o primeiro corte foi implantado no commit `20d7807`.
 - Caddy é a entrada HTTPS; produtos executam em serviços e containers separados.
 - PostgreSQL e Redis permanecem na rede Docker privada.
 - As bases de staging são PostgreSQL interno na VPS e usam os nomes `dachbyte_*` sem sufixo `_staging`; o isolamento é feito pela stack e ambientes de staging, não pelo nome do banco.
@@ -22,12 +23,21 @@ status: staging-ativo
 - Em 13/09/2026, todos os ambientes de módulos que ainda usavam o Hub legado foram alinhados para `HUB_BASE_URL=https://paymentcontrol.davantti-suite.workers.dev`; 14 serviços foram recriados e ficaram saudáveis.
 - Consulte [[Inventário de variáveis — Hub e staging]] antes de alterar qualquer ambiente, segredo ou fluxo de autenticação.
 
+## Deploy das landings Seller
+
+- O gateway foi reconstruído a partir de `dachbyte/main` e ficou `healthy`.
+- Estão publicadas as rotas `/seller`, `/seller/mercado-livre`, `/seller/shopee` e `/seller/rastreio`; o CSS compartilhado é servido em `/seller-assets/seller-landing.css`.
+- O deploy não adicionou variáveis novas. Ele preserva os arquivos não versionados em `/opt/dachbyte/repository/infra/env/` e os fluxos existentes, incluindo `HUB_BASE_URL`, `HUB_INTERNAL_TOKEN`, `ML_PUBLIC_ORIGIN`, `ML_REDIRECT_URI`, `ML_BOOTSTRAP_MASTER_*`, `SHOPEE_*`, `SUPER_ADMIN_PASSWORD` e `VOLT_CORE_BOOTSTRAP_MASTER_*`.
+- Backup do corte: `/opt/dachbyte/backups/new-main-20260914T014403Z`; branch de rollback: `rollback/dach-before-new-main-20260914T014403Z`.
+
 ## Próximos passos de staging
 
 1. Validar a senha global do Hub para cada master via fluxo oficial de identidade/recuperação de senha.
 2. Testar login e abertura de cada módulo liberado no gateway.
 3. Configurar backup criptografado, retenção e testar restauração.
-4. Somente em etapa aprovada: DNS e tráfego de produção, callbacks OAuth produtivos e monitoramento de tráfego.
+4. Fazer a revisão visual e responsiva das novas landings Seller e acompanhar conversão antes de aumentar o conteúdo.
+5. Automatizar o deploy de `dachbyte/main` com smoke tests e rollback.
+6. Somente em etapa aprovada: DNS e tráfego de produção, callbacks OAuth produtivos e monitoramento de tráfego.
 
 ## Bloqueado até aprovação específica
 
