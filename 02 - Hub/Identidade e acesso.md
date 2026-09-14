@@ -20,7 +20,7 @@ area: hub
 - Usuário criado pelo Core: exige uma empresa vinculada ao Hub, é sincronizado no Hub com acesso pendente a `volt_core` e recebe convite para criar senha.
 - O provisionamento de empresa é idempotente: a mesma chave retorna o mesmo tenant e uma tentativa após falha retoma o tenant já reservado.
 - A sincronização de usuário Volt Core exige que o produto esteja ativo no tenant; não há criação de usuário operacional local sem Hub.
-- Migration `053_internal_identity_provisioning.sql` foi aplicada em 11/09/2026 na branch Neon `payment` usada pelo sandbox do Hub.
+- Migration `053_internal_identity_provisioning.sql` foi aplicada em 11/09/2026 no fluxo Neon do Hub; ela também está presente na branch piloto ativa `paymentcontrol-pilot-20260910`.
 - Hub publicado pelo commit `cbc65bc`; DACH publicado em `dach` pelos commits `101ec5f3` e `1b812ca0`.
 - Testes locais concluídos: Hub `58/58`, TypeScript aprovado; Volt Core `236/236` e build aprovado.
 - Staging comprovou a criação Hub-first: empresa criada no Core apareceu no Hub com o mesmo tenant e produto `volt_core` ativo; usuário criado no Core gerou vínculo e convite pendentes no Hub.
@@ -51,6 +51,13 @@ Os valores não são documentados aqui nem versionados. A lista de nomes foi con
 
 - Em 13/09/2026, `NEON_DATABASE_URL` do Worker `paymentcontrol` foi rotacionada para a conexão da branch `paymentcontrol-pilot-20260910` e promovida na versão Cloudflare `c6b67479` com 100% do tráfego.
 - O valor da conexão não é exibido nem documentado. A branch, o projeto e o papel de cada variável estão em [[Inventário de variáveis — Hub e staging]].
+
+### Reconciliação Git × Neon — 14/09/2026
+
+- Auditoria somente-leitura no Neon confirmou que `paymentcontrol-pilot-20260910` possui a migration `053_internal_identity_provisioning` e a tabela `internal_identity_provisioning_operations`.
+- A branch Git `payment` estava defasada: não continha o commit `cbc65bc` nem o arquivo `sql/053_internal_identity_provisioning.sql`, embora o banco já estivesse atualizado.
+- A correção foi o cherry-pick pontual de `cbc65bc` em `payment`, gerando o commit `2973136` (`Provision Volt Core identities through Hub`). Não houve merge de mudanças adicionais de `dev`.
+- Nenhuma migration foi executada novamente no Neon: a ação alinhou somente o histórico do código ao estado já existente do banco. Após o alinhamento, a suíte de identidade passou `58/58` e o TypeScript foi aprovado.
 
 ### Contrato do DACH com o Hub
 

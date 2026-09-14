@@ -29,15 +29,21 @@ Fazer do Hub `paymentcontrol` a fonte de verdade de empresa, usuário, acesso e 
 
 ## Implementado
 
-- Hub publicado no Worker `paymentcontrol` pelo commit `cbc65bc` (`Provision Volt Core identities through Hub`).
+- Hub publicado no Worker `paymentcontrol` pelo commit `cbc65bc` (`Provision Volt Core identities through Hub`), reconciliado na branch Git `payment` pelo commit `2973136` em 14/09/2026.
 - Endpoint idempotente de empresa no Hub e persistência da operação em `internal_identity_provisioning_operations`.
-- Migration `053_internal_identity_provisioning.sql` aplicada na branch Neon `payment` em 11/09/2026; é aditiva e não remove dados.
+- Migration `053_internal_identity_provisioning.sql` aplicada no fluxo Neon em 11/09/2026; é aditiva e não remove dados. A auditoria de 14/09 confirmou a migration e a tabela `internal_identity_provisioning_operations` na branch piloto ativa `paymentcontrol-pilot-20260910`.
 - DACH publicado na branch `dach` pelos commits `101ec5f3` (integração Hub-first) e `1b812ca0` (empresa explícita no convite).
 - `business-core` reconstruído e recriado na VPS de staging; o container está saudável e confirma o cliente Hub-first e as variáveis estritas sem expor o token.
 - Cliente interno do Core com autenticação Bearer, timeout e mensagens seguras.
 - Criação de empresa Hub-first e usuário/convidado Hub-first.
 - Modal master exige a seleção explícita da empresa; não assume a primeira empresa da lista.
 - Validações locais: Hub `58/58` e TypeScript aprovado; Core `236/236`; build do Core aprovado durante a reconstrução da imagem.
+
+### Reconciliação Git × Neon — 14/09/2026
+
+- Foi identificada uma divergência de histórico: o banco piloto já possuía a migration 053, mas a branch Git `payment` não continha o commit de origem `cbc65bc` nem a migration.
+- A correção foi um cherry-pick exclusivo de `cbc65bc` para `payment`, resultando em `2973136`. Não foi feito merge de `dev` e nenhuma migration foi reaplicada no banco.
+- A validação posterior passou com `58/58` testes de identidade e TypeScript sem erros.
 
 ## Evidência integrada de staging
 
