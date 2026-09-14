@@ -31,6 +31,14 @@ status: staging-ativo
 - O deploy não adicionou variáveis novas. Ele preserva os arquivos não versionados em `/opt/dachbyte/repository/infra/env/` e os fluxos existentes, incluindo `HUB_BASE_URL`, `HUB_INTERNAL_TOKEN`, `ML_PUBLIC_ORIGIN`, `ML_REDIRECT_URI`, `ML_BOOTSTRAP_MASTER_*`, `SHOPEE_*`, `SUPER_ADMIN_PASSWORD` e `VOLT_CORE_BOOTSTRAP_MASTER_*`.
 - Backup do corte: `/opt/dachbyte/backups/new-main-20260914T014403Z`; branch de rollback: `rollback/dach-before-new-main-20260914T014403Z`.
 
+## Atualização visual Seller e Business — 14/09/2026
+
+- Publicada a experiência compartilhada de landings Seller/Business e a landing pública DACHBYTE Price em `/business/price`.
+- O commit final aplicado na VPS foi `ce0cfaaa451f7a3c25db4b94b2d84857b5c78dfb`; `business-portal` foi recriado e ficou `healthy`. Gateway, Core, Stock e Chat permaneceram `healthy`.
+- Smoke tests externos confirmaram 200 para Business, Price, Seller Mercado Livre e os assets compartilhados.
+- Não foram alterados banco, migrations, variáveis, segredos, DNS, callbacks OAuth ou arquivos de backup não versionados.
+- Registro completo: [[Landings Seller e Business — 2026-09-14]].
+
 ## Próximos passos de staging
 
 1. Validar a senha global do Hub para cada master via fluxo oficial de identidade/recuperação de senha.

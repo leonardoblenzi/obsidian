@@ -25,6 +25,7 @@ status: ativo
 - [[Shopee]]
 - [[Hub]]
 - [[Migração para VPS]]
+- [[Landings Seller e Business — 2026-09-14]]
 
 ## A mapear
 

@@ -19,3 +19,4 @@ Linha de produtos Business: Core, Stock, Chat e Price.
 - [[Gateway]]
 - [[Operações e infraestrutura]]
 - [[Refatoração Davantti para Dachbyte]]
+- [[Landings Seller e Business — 2026-09-14]]
