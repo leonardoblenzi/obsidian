@@ -12,7 +12,8 @@ type: catalogo
 
 ## Business
 
-- Core, Stock, Chat e Price — [[Business]]
+- [[Politicas Volt Core e Volt Ótica no Hub|Volt Core]] e Volt Ótica — instalação Business e política comercial no Hub.
+- Stock, Chat e Price — [[Business]]
 
 ## Plataforma
 

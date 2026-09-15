@@ -56,6 +56,7 @@ Fazer do Hub `paymentcontrol` a fonte de verdade de empresa, usuário, acesso e 
 
 ## Próximos passos
 
+0. [[Politicas Volt Core e Volt Ótica no Hub|Migration 055 do Volt Core e Volt Ótica]] aplicada no Neon piloto e Worker `paymentcontrol` publicado em 15/09/2026; a homologação funcional autenticada continua pendente.
 1. Testar o replay da criação com a mesma chave de idempotência, garantindo que não cria um segundo tenant.
 2. Abrir o convite de QA, aceitar e definir a senha global. A submissão final da troca de senha deve ser feita pelo usuário no navegador.
 3. Autenticar o usuário convidado no DACH Core e confirmar a ativação do acesso `volt_core` após a senha.
