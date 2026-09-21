@@ -5,6 +5,8 @@ status: staging-ativo
 
 # VPS e staging
 
+> Atualização atual: o domínio público ativo é `https://dachbyte.tech`. O histórico abaixo registra a etapa de staging; para a publicação e a seleção Seller atuais, consulte [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
+
 ## Fatos verificados
 
 - O staging está ativo na VPS `srv1971387`, com entrada pública em `https://staging.dachbyte.tech`.
@@ -56,3 +58,11 @@ status: staging-ativo
 - Desligamento de Render e Neon.
 
 Fonte: `README-VPS.md` e `docs/operations/dachbyte-vps-staging-runbook.md`.
+
+## Atualização de produção — 21/09/2026
+
+- O checkout da VPS está em `dachbyte/main`, commit `e95db29`; para atualizar, usar `git pull --ff-only dachbyte main`, pois `origin` permanece apontando para o repositório histórico.
+- `gateway` e `seller-ml-web` foram reconstruídos com recriação forçada e ficaram `healthy`.
+- O smoke público confirmou `https://dachbyte.tech/selecao-plataforma` com somente ML, Shopee e Tracking e `https://dachbyte.tech/healthz` saudável.
+- Registro completo: [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
+- Procedimento operacional: [[Runbook de deploy DACH na VPS]].

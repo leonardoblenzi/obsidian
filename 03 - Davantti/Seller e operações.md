@@ -13,6 +13,15 @@ status: ativo
 - Log: `apps/seller-log/`.
 - Leader: `apps/seller-leader/`.
 
+## Seleção compartilhada Seller
+
+- A seleção `/selecao-plataforma` é restrita a Mercado Livre, Shopee e Tracking.
+- A visibilidade desses três módulos continua dependente dos entitlements retornados pelo Hub na sessão.
+- DACH Ads, Log, Madeira e Leader seguem com jornadas próprias e não devem voltar a ser adicionados à seleção Seller.
+- As rotas compatíveis dos módulos removidos permanecem protegidas pelo Gateway; removê-las da seleção não remove nem concede acesso.
+- Detalhes de publicação e validação: [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
+- Mapa de responsabilidades de rota e sessão: [[Mapa de rotas e autenticação DACH]].
+
 ## Variáveis de acesso compartilhadas
 
 - Madeira, Rastreio, Log e Leader usam a integração central `HUB_BASE_URL`, `HUB_INTERNAL_TOKEN`, `HUB_LOGIN_MODE` e `HUB_AUTH_MODE`.
