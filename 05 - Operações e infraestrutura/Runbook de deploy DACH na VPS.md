@@ -108,6 +108,49 @@ Para a seleção Seller atual, o segundo comando deve listar somente `ml`, `shop
 | Caddy ou rotas | `caddy` e serviços envolvidos | `caddy validate`, aliases canônicos e legado, headers de depreciação. |
 | Banco ou migration | serviço afetado + operação explícita | Backup, migration, health e rollback documentados antes do deploy. |
 
+## Procedimento específico do DACH Ads
+
+O Ads separa HTTP, jobs e migration:
+
+- `ads-api` — páginas, sessão, callbacks e APIs;
+- `ads-worker` — jobs Google/Meta e heartbeat Redis;
+- `ads-migrate` — profile manual `ops`, nunca deve subir no deploy comum.
+
+Arquivos de runtime:
+
+```text
+infra/env/ads.env
+infra/env/ads-google.env
+infra/env/hub.env
+infra/env/ads-migrate.env
+```
+
+`ads-api` e `ads-worker` compartilham os três primeiros arquivos. Uma mudança em `META_*`, `GOOGLE_*`, `ADS_TOKEN_ENCRYPTION_KEY`, Redis, Hub ou conexão de banco exige recriação dos consumidores. Não basta reconstruir somente a API quando o worker também usa a variável.
+
+Deploy de código/ambiente compartilhado Ads:
+
+```bash
+cd /opt/dachbyte/repository
+docker compose --env-file infra/env/compose.env \
+  -f infra/compose.vps.yml -p dachbyte-staging \
+  up -d --build --force-recreate --no-deps ads-api ads-worker
+
+docker compose --env-file infra/env/compose.env \
+  -f infra/compose.vps.yml -p dachbyte-staging \
+  ps ads-api ads-worker
+```
+
+Smoke mínimo:
+
+```bash
+curl -fsS https://dachbyte.tech/ads/healthz
+curl -fsSI https://dachbyte.tech/ads/privacidade
+curl -fsSI https://dachbyte.tech/ads/termos
+curl -fsSI https://dachbyte.tech/ads/exclusao-de-dados
+```
+
+Ao conferir variáveis dentro do container, mostre apenas presença (`true/false`) e valores públicos como callback/versionamento. Nunca execute comandos que imprimam o ambiente completo. Consulte [[DACH Ads — Meta, páginas legais e identidade visual — 2026-09-21]] para o checklist OAuth e o estado atual.
+
 ## Rollback
 
 1. Pare e registre o erro, o commit e os logs relevantes sem expor segredos.
@@ -131,3 +174,4 @@ O checkout possui referências históricas de rollback. Antes de usá-las, confi
 - [[VPS e staging]]
 - [[Mapa de rotas e autenticação DACH]]
 - [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]]
+- [[DACH Ads — Meta, páginas legais e identidade visual — 2026-09-21]]

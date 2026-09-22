@@ -1,7 +1,7 @@
 ---
 type: projeto
 produto: dach_ads
-status: meta-configurada-em-validacao
+status: meta-api-configurada-worker-pendente
 atualizado: 2026-09-21
 ---
 
@@ -109,6 +109,7 @@ O query versionado atual do asset é `v=20260922.1`, usado para invalidar o favi
 | Repositório | `git@github.com:leonardoblenzi/dachbyte.git`, branch `main`. |
 | Commit atual documentado | `7af3e2f3` (`Bust cached DACH Ads icon`). |
 | Serviço publicado | `ads-api`, saudável após a reconstrução. |
+| Worker | saudável, porém ainda executando o container anterior à inclusão das variáveis `META_*`; precisa ser recriado antes do primeiro sync Meta. |
 | Domínio usado pelo produto | `https://dachbyte.tech`. |
 | Compose da VPS | ainda usa o project name técnico `dachbyte-staging`, apesar de atender o domínio público atual. |
 | Testes Ads | `27/27` aprovados após páginas legais e ajustes de identidade visual. |
@@ -121,6 +122,7 @@ O conjunto raiz do DACH passou com `161/161` em 21/09/2026. Os testes cobrem sep
 
 - [ ] Rodar OAuth Google completo com empresa e usuário de QA.
 - [x] Criar aplicativo Meta, configurar variáveis e cadastrar URLs públicas de produção.
+- [ ] Recriar `ads-worker` para carregar `META_APP_ID`, `META_APP_SECRET` e `META_REDIRECT_URI`; a verificação de runtime atual retornou ausência das três variáveis no worker.
 - [ ] Rodar OAuth Meta completo com uma conta administradora/testadora e empresa de QA.
 - [ ] Confirmar callback, descoberta, seleção e sincronização read-only de uma conta Meta Ads.
 - [ ] Preparar App Review/acesso avançado e portfólio DACHBYTE antes de abrir o OAuth Meta para clientes externos.
