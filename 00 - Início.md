@@ -2,7 +2,6 @@
 type: indice
 status: ativo
 ---
-
 # Central Davantti / Dachbyte
 
 ## Agora

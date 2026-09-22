@@ -66,3 +66,11 @@ Fonte: `README-VPS.md` e `docs/operations/dachbyte-vps-staging-runbook.md`.
 - O smoke público confirmou `https://dachbyte.tech/selecao-plataforma` com somente ML, Shopee e Tracking e `https://dachbyte.tech/healthz` saudável.
 - Registro completo: [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
 - Procedimento operacional: [[Runbook de deploy DACH na VPS]].
+
+## Pendência operacional — backup externo Restic (22/09/2026)
+
+- O job `./business-db-ops.sh backup` voltou a construir após a correção do contexto Docker no commit `acac9ac` (`!infra/backup.sh` no `.dockerignore`).
+- A execução continua bloqueada por configuração: `infra/env/backup.env` não possui `RESTIC_REPOSITORY` (e precisa também de `RESTIC_PASSWORD` e das credenciais S3 compatíveis).
+- Decisão atual: adiar a configuração do backup externo para não bloquear a publicação solicitada. O deploy da migration `071` seguirá por exceção consciente, sem um backup Restic novo imediatamente anterior.
+- Configuração pendente recomendada: bucket privado Cloudflare R2 `dachbyte-backups-prod`, `RESTIC_REPOSITORY=s3:https://<account-id>.r2.cloudflarestorage.com/dachbyte-backups-prod`, senha Restic gerada e guardada em cofre, `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` limitadas ao bucket. Depois, inicializar com `docker compose --env-file ./env/compose.env -f compose.vps.yml -f compose.backup.yml --profile backup run --rm --entrypoint restic backup init`, executar `./business-db-ops.sh backup` e testar restauração.
+- Publicação executada em 22/09/2026: checkout da VPS atualizado para `acac9ac`; a migration `071_add_company_deletion_audit_scope.sql` foi confirmada em `ml.migracoes`, com `ml.auth_audit.empresa_id`, `ml.auth_audit.meli_conta_id` e `ml.company_deletion_receipts` presentes. `seller-ml-web` e `seller-ml-worker` foram recriados e ficaram `healthy`; smoke checks `https://dachbyte.tech/healthz` e `https://dachbyte.tech/ml/health` retornaram `ok`.

@@ -64,6 +64,25 @@ Verificação posterior ao descarte:
 4. Manter a revisão das regras de `ml.auth_audit_retention_rules` no painel Master: elas determinam quais eventos expirados são removidos na manutenção.
 5. Não executar manualmente `DROP TABLE` em partições; o scheduler mantém remoção de partições em simulação até uma decisão operacional específica.
 
+## Limpeza de disco da VPS
+
+Após a migração e os rebuilds necessários, o painel da Hostinger mostrou aumento temporário do uso de disco. O diagnóstico no host separou o consumo corretamente:
+
+- volume PostgreSQL: aproximadamente `2,8 GB`;
+- cache de build Docker antes da limpeza: `22,29 GB`, dos quais `21,67 GB` eram recuperáveis;
+- imagens Docker: `13,93 GB`; volumes e containers ativos foram preservados.
+
+Em 22/09/2026 foi executado `docker builder prune -af`. A limpeza removeu `22,12 GB` somente de cache de build, sem remover containers ativos, imagens em uso, volumes ou dados PostgreSQL.
+
+Verificação posterior no filesystem da VPS:
+
+- uso de `/`: `26,04 GB` de `102,89 GB` (`26%`);
+- espaço livre: `76,83 GB`;
+- cache de build remanescente: `168,7 MB` ativo/não recuperável;
+- `seller-ml-web` e `seller-ml-worker` permaneceram `healthy`.
+
+O painel da Hostinger pode demorar para refletir a métrica do filesystem; a referência operacional é a leitura direta do host (`df`) e `docker system df`.
+
 ## Referências
 
 - [[VPS e staging]]
