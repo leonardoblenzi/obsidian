@@ -5,6 +5,8 @@ status: staging-ativo
 
 # VPS e staging
 
+> **Estado vigente desde 27/09/2026:** o Hub transacional está na VPS em `https://hub.dachbyte.tech`, com banco local `dachbyte_hub`. As seções antigas que mencionam Worker Cloudflare + Neon são histórico. Consulte [[Cutover emergencial do Hub para VPS — 2026-09-27]].
+
 > Atualização atual: o domínio público ativo é `https://dachbyte.tech`. O histórico abaixo registra a etapa de staging; para a publicação e a seleção Seller atuais, consulte [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
 
 ## Fatos verificados

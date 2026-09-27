@@ -6,6 +6,8 @@ updated: 2026-09-13
 
 # Inventário de variáveis — Hub e staging
 
+> **Estado vigente desde 27/09/2026:** o runtime ativo é `https://hub.dachbyte.tech`; as variáveis do Worker/Neon abaixo são referência histórica para reconciliação. Os arquivos ativos são `hub.env`, `hub-runtime.env`, `hub-migrate.env`, `hub-cutover.env` e `postgres.env` na VPS. Consulte [[Cutover emergencial do Hub para VPS — 2026-09-27]].
+
 Esta nota registra **nomes, arquivo/ambiente e responsabilidade**. Nunca registrar valores de senhas, tokens, chaves de API ou URLs de conexão com credenciais.
 
 ## Hub Cloudflare: Worker `paymentcontrol`

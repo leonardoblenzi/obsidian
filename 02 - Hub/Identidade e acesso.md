@@ -5,6 +5,8 @@ area: hub
 
 # Identidade e acesso
 
+> **Estado vigente desde 27/09/2026:** Gateway e módulos usam `HUB_BASE_URL=https://hub.dachbyte.tech`. O Hub roda em `hub-web` e usa o banco privado `dachbyte_hub` na VPS. O Worker `paymentcontrol` e o Neon abaixo permanecem apenas como histórico/origem pendente de reconciliação. Consulte [[Cutover emergencial do Hub para VPS — 2026-09-27]].
+
 ## Evidências no repositório
 
 - Sincronização de identidades: `lib/hubIdentitySync.js`.
