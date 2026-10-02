@@ -28,9 +28,10 @@ area: hub
 - Staging comprovou a criação Hub-first: empresa criada no Core apareceu no Hub com o mesmo tenant e produto `volt_core` ativo; usuário criado no Core gerou vínculo e convite pendentes no Hub.
 - No master do Core, empresa é seleção obrigatória ao criar usuário. Isso evita um vínculo acidental com a primeira empresa da lista.
 
-## Worker e configuração ativa
+## Worker e configuração histórica
 
-- Worker em uso: `paymentcontrol`, publicado em `https://paymentcontrol.davantti-suite.workers.dev`.
+- O conteúdo desta seção registra a configuração anterior ao cutover de 27/09/2026. O Worker `paymentcontrol` e o Neon não são mais a autoridade transacional.
+- Worker anteriormente usado: `paymentcontrol`, publicado em `https://paymentcontrol.davantti-suite.workers.dev`.
 - Repositório de origem: `hubPagamentos`; a configuração do Worker ativo está na branch Git `payment` (`[env.paymentcontrol]` em `wrangler.toml`). O `name` padrão `hub-pagamento` é outro Worker e não deve ser confundido com o Hub usado pelo staging.
 - Ambiente do Worker: `paymentcontrol`, com `ENVIRONMENT=production`, `PAYMENT_PROVIDER=asaas` e API Asaas produtiva.
 - Portal administrativo: `/ops-portal`; URL pública do Hub: `https://paymentcontrol.davantti-suite.workers.dev`.
@@ -62,11 +63,11 @@ Os valores não são documentados aqui nem versionados. A lista de nomes foi con
 - Nenhuma migration foi executada novamente no Neon: a ação alinhou somente o histórico do código ao estado já existente do banco. Após o alinhamento, a suíte de identidade passou `58/58` e o TypeScript foi aprovado.
 - Em 14/09/2026, a revisão reconciliada foi publicada manualmente no Worker `paymentcontrol` como versão Cloudflare `b01bf28e-f318-4404-bbb0-ec37d6a1af63`, com 100% do tráfego segundo o Wrangler. A rota pública `/health` respondeu `200 OK` com `environment=production`.
 
-### Contrato do DACH com o Hub
+### Contrato vigente do DACH com o Hub
 
-- `HUB_BASE_URL=https://paymentcontrol.davantti-suite.workers.dev`.
-- `HUB_INTERNAL_TOKEN` deve ter o mesmo valor configurado como secret no Worker, sem ser exibido em logs, Git ou Obsidian.
-- O arquivo da VPS é `infra/env/hub.env`, fora do Git e com permissão `600`.
+- `HUB_BASE_URL=https://hub.dachbyte.tech`.
+- `HUB_INTERNAL_TOKEN` deve ter o mesmo valor no Hub VPS e nos consumidores autorizados, sem ser exibido em logs, Git ou Obsidian.
+- Os arquivos de runtime ficam em `infra/env/`, principalmente `hub-runtime.env`, `hub.env` e `gateway.env`; permanecem fora do Git e com acesso restrito.
 
 ### Masters de módulo no checkpoint de staging
 

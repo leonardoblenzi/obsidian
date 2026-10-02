@@ -6,6 +6,8 @@ updated: 2026-09-13
 
 # Handoff — Hub, VPS e masters — 2026-09-13
 
+> **Registro histórico:** este handoff descreve o estado de 13/09/2026. Para a topologia vigente, com Hub e bancos operacionais na VPS, use [[Estado operacional DACH — Hub, VPS e módulos — 2026-10-01]].
+
 Use esta nota como ponto de retomada em outro chat. Ela descreve o estado **já aplicado e verificado**, os limites atuais e os próximos testes. Não contém valores de secrets.
 
 ## Estado em uma frase

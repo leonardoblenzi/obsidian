@@ -15,11 +15,13 @@ status: ativo
 
 ## Seleção compartilhada Seller
 
-- A seleção `/selecao-plataforma` é restrita a Mercado Livre, Shopee e Tracking.
-- A visibilidade desses três módulos continua dependente dos entitlements retornados pelo Hub na sessão.
+- A seleção `/selecao-plataforma` contém Mercado Livre, Shopee, Magalu e Tracking, mas renderiza somente os cards presentes em `entitlements.modules` na sessão confirmada pelo Hub.
+- Todos os cards começam ocultos e desabilitados; o frontend só revela um módulo após confirmação positiva do Hub. A rota `/go/<módulo>` mantém uma segunda barreira de autorização no backend.
+- Masters internos usam seus escopos `module_master` e não são tratados como tenants comerciais da suíte. O master ML foi validado com acesso somente a `ml`; tentativa de abrir Magalu foi bloqueada.
 - DACH Ads, Log, Madeira e Leader seguem com jornadas próprias e não devem voltar a ser adicionados à seleção Seller.
 - As rotas compatíveis dos módulos removidos permanecem protegidas pelo Gateway; removê-las da seleção não remove nem concede acesso.
 - Detalhes de publicação e validação: [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]].
+- Correções de sessão/visibilidade publicadas em `ced525c8` e `b654b52e`.
 - Mapa de responsabilidades de rota e sessão: [[Mapa de rotas e autenticação DACH]].
 
 ## Variáveis de acesso compartilhadas

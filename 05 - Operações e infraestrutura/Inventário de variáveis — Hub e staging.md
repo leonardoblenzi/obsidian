@@ -1,7 +1,7 @@
 ---
 type: operacoes
 status: ativo
-updated: 2026-09-13
+updated: 2026-10-01
 ---
 
 # Inventário de variáveis — Hub e staging
@@ -29,13 +29,28 @@ Esta nota registra **nomes, arquivo/ambiente e responsabilidade**. Nunca registr
 
 | Variável | Responsabilidade |
 | --- | --- |
-| `HUB_BASE_URL` | Deve apontar para `https://paymentcontrol.davantti-suite.workers.dev`; não usar o Worker legado `hub-pagamento`. |
+| `HUB_BASE_URL` | Deve apontar para o runtime ativo `https://hub.dachbyte.tech`. O Worker `paymentcontrol.davantti-suite.workers.dev` é legado e não deve voltar a ser usado sem reconciliação. |
 | `HUB_INTERNAL_TOKEN` | Credencial de serviço compartilhada com o secret homônimo do Worker. |
 | `HUB_LOGIN_MODE` | Define o modo de autenticação do módulo contra o Hub. |
 | `HUB_AUTH_MODE` | Define o modo de validação/autorização do módulo contra o Hub. |
 | `HUB_ENFORCEMENT` | Aplicado em `infra/env/hub.env`; controla a aplicação estrita da política pelo gateway. |
 
 Arquivos principais: `infra/env/hub.env`, `infra/env/gateway.env`, `infra/env/business-core.env`, `infra/env/seller-ml.env`, `infra/env/seller-shopee.env` e `infra/env/seller-tracking.env`. Todos ficam fora do Git e não devem ter valores copiados para o vault.
+
+## Hub VPS e Asaas
+
+| Variável | Arquivo | Responsabilidade |
+| --- | --- | --- |
+| `ASAAS_API_KEY` | `infra/env/hub-runtime.env` | Chave da API de produção do Asaas; validada em 01/10/2026. |
+| `ASAAS_API_BASE_URL` | `infra/env/hub-runtime.env` | Base da API; produção usa `https://api.asaas.com/v3`. |
+| `ASAAS_WEBHOOK_TOKEN` | `infra/env/hub-runtime.env` | Token conferido pelo endpoint público do webhook. |
+| `HUB_PIX_RENEWAL_CRON` | `infra/env/hub-runtime.env` | Agenda do job PIX; configuração ativa `0 * * * *`, interpretada em UTC. |
+| `HUB_MAINTENANCE_CRON` | `infra/env/hub-runtime.env` | Agenda de manutenção; configuração ativa `17 9 * * *`, interpretada em UTC. |
+| `ASAAS_WEBHOOK_ID` | `infra/env/hub-cutover.env` | Identificador do webhook alterado pelo procedimento de cutover. |
+| `HUB_CUTOVER_WEBHOOK_URL` | `infra/env/hub-cutover.env` | Destino do webhook: `https://hub.dachbyte.tech/v1/public/webhooks/payment?provider=asaas`. |
+| `CONFIRM_ASAAS_WEBHOOK_CHANGE` | `infra/env/hub-cutover.env` | Trava de alteração; deve permanecer `NO` fora da janela controlada de cutover. |
+
+O checkout do Hub usa `PAYMENT_PROVIDER=asaas`, `PAYMENT_SUCCESS_REDIRECT_URL`, `SUITE_GATEWAY_BASE_URL` e `RENEWAL_INTENT_SECRET`. Valores sensíveis permanecem somente na VPS.
 
 ## Volt Core
 

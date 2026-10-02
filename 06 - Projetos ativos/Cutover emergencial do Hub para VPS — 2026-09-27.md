@@ -1,7 +1,7 @@
 ---
 type: handoff
 status: hub-vps-ativo
-updated: 2026-09-27
+updated: 2026-10-01
 ---
 
 # Cutover emergencial do Hub para VPS — 2026-09-27
@@ -31,8 +31,8 @@ O Worker antigo ainda responde a `/health`, mas sua conexão transacional com o 
 | Role migration | `dachbyte_hub_migrator` |
 | Portal administrativo | `https://hub.dachbyte.tech/ops-portal/login` |
 | Gateway e módulos | `HUB_BASE_URL=https://hub.dachbyte.tech` |
-| Scheduler novo | desligado deliberadamente |
-| Webhook Asaas | ainda não migrado para o Hub VPS |
+| Scheduler novo | ativo e estável desde 01/10/2026 |
+| Webhook Asaas | ativo em `https://hub.dachbyte.tech/v1/public/webhooks/payment?provider=asaas` |
 
 Todos os 22 containers da stack ficaram saudáveis após a troca. Smoke público confirmou `200` para `/healthz`, `/login`, `/selecao-plataforma` e portal do Hub.
 
@@ -61,6 +61,20 @@ As roles do runtime e da migration passaram a usar credenciais distintas. Antes 
 
 - `7f1fc713` — corrige `\\gexec` no provisionamento de permissões do Hub.
 - `1a2a9840` — permite login centralizado do master `volt_core`.
+- `ced525c8` — corrige a sessão da seleção Seller para masters internos da plataforma.
+- `b654b52e` — oculta cards Seller sem autorização confirmada pelo Hub.
+- Hub `b83c1ad` — mantém o processo `hub-scheduler` vivo no runtime Node.
+
+## Fechamento do Asaas — 01/10/2026
+
+- `ASAAS_API_KEY`, `ASAAS_API_BASE_URL` e `ASAAS_WEBHOOK_TOKEN` estão preenchidas em `infra/env/hub-runtime.env` e carregadas pelo container `hub-web`; os valores não devem ser registrados.
+- A credencial foi validada contra a API de produção do Asaas com resposta HTTP `200`.
+- O webhook deixou de apontar para `paymentcontrol.davantti-suite.workers.dev` e passou a apontar para `https://hub.dachbyte.tech/v1/public/webhooks/payment?provider=asaas`.
+- O webhook está habilitado, não interrompido e usa entrega sequencial.
+- Eventos assinados e suportados pelo código: `PAYMENT_CREATED`, `PAYMENT_RECEIVED`, `PAYMENT_CONFIRMED`, `PAYMENT_OVERDUE`, `PAYMENT_REFUNDED` e `PAYMENT_DELETED`.
+- A rota pública foi validada com o token real e payload propositalmente inválido; o retorno `400 invalid_json` confirmou domínio, rota e autenticação sem gerar evento financeiro.
+- O `hub-scheduler` reiniciava porque `src/runtime/nodeScheduler.ts` aplicava `timer.unref()`. A chamada foi removida no commit `b83c1ad`; o container foi recriado e permaneceu `running`, com `restartCount=0` na validação.
+- Estado anterior do webhook salvo em `infra/.cutover/asaas-webhook-before.json`; estado posterior salvo em `infra/.cutover/asaas-webhook-after-20261001.json`.
 
 ## Backups
 
@@ -72,11 +86,12 @@ As roles do runtime e da migration passaram a usar credenciais distintas. Antes 
 
 1. Desbloquear temporariamente o Neon ou obter um backup posterior a 25/09 e comparar registros criados após o snapshot.
 2. Decidir como reconciliar qualquer diferença antes de descartar definitivamente a origem Neon.
-3. Migrar e validar o webhook Asaas para `https://hub.dachbyte.tech/v1/public/webhooks/payment`.
-4. Somente depois iniciar `hub-scheduler`; confirmar que o cron anterior do Worker está desativado.
-5. Testar login real dos masters de ML, Shopee e Rastreio e abertura de seus respectivos módulos.
+3. Executar um checkout Asaas controlado e validar `checkout → pagamento → webhook → banco VPS → recurso → acesso`.
+4. Confirmar no banco a primeira linha real em `payment_provider_webhook_events` e validar idempotência por reenvio.
+5. Testar login real dos masters de Shopee e Rastreio e abertura de seus respectivos módulos; ML foi validado com acesso somente a `ml`.
 6. Testar recuperação de senha e envio de e-mail pelo Brevo no runtime VPS.
 7. Configurar backup externo criptografado e executar um teste de restauração do `dachbyte_hub`.
+8. Criar alertas para falhas do webhook e reinicializações do `hub-scheduler`.
 
 ## Regra de rollback
 

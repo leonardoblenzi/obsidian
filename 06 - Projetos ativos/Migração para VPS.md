@@ -1,6 +1,6 @@
 ---
 type: projeto
-status: staging-ativo
+status: producao-ativa
 ---
 
 # Migração para VPS
@@ -11,14 +11,14 @@ Executar a plataforma Dachbyte em VPS própria, com serviços isolados, bancos e
 
 ## Estado
 
-O staging está em execução na VPS, com serviços Dachbyte e bancos internos privados. O Hub continua intencionalmente no Cloudflare Worker `paymentcontrol`, usando a branch Neon `paymentcontrol-pilot-20260910`. Não há autorização implícita para alterar DNS, dados de produção, callbacks OAuth produtivos ou encerrar Render e Neon.
+A plataforma está em execução na VPS, com serviços DACHBYTE e bancos PostgreSQL internos privados. Desde 27/09/2026, o Hub transacional também está na VPS em `https://hub.dachbyte.tech`, usando o banco local `dachbyte_hub`; o Worker Cloudflare e a branch Neon deixaram de ser a autoridade operacional. Em 01/10/2026, o webhook Asaas foi migrado para o Hub VPS e o `hub-scheduler` foi ativado após correção do ciclo de vida do processo.
 
 ## Próximos passos
 
-1. Consolidar os testes de login centralizado e abertura de módulos por escopo.
-2. Validar rotas, filas ML e Chat no staging.
-3. Configurar e testar restauração de backup.
-4. Planejar corte apenas após critérios de saúde, autenticação, OAuth, fila e rollback.
+1. Executar checkout Asaas controlado e validar o fluxo completo até a liberação do módulo.
+2. Consolidar testes de login e abertura de cada módulo por escopo do Hub.
+3. Configurar backup externo criptografado e testar restauração.
+4. Automatizar deploy, smoke tests, alertas de webhook e rollback.
 
 ## Referências
 

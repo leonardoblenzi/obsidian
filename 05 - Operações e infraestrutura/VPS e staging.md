@@ -1,6 +1,7 @@
 ---
 type: operacoes
-status: staging-ativo
+status: producao-ativa
+updated: 2026-10-01
 ---
 
 # VPS e staging
@@ -16,12 +17,12 @@ status: staging-ativo
 - Caddy é a entrada HTTPS; produtos executam em serviços e containers separados.
 - PostgreSQL e Redis permanecem na rede Docker privada.
 - As bases de staging são PostgreSQL interno na VPS e usam os nomes `dachbyte_*` sem sufixo `_staging`; o isolamento é feito pela stack e ambientes de staging, não pelo nome do banco.
-- O Hub é a exceção deliberada: permanece como Worker Cloudflare e usa a branch Neon `paymentcontrol-pilot-20260910`.
+- O Hub também está na VPS desde 27/09/2026, em `https://hub.dachbyte.tech`, com banco local `dachbyte_hub`. Worker Cloudflare e Neon permanecem apenas como histórico/possível fonte de reconciliação.
 - O plano inclui backup externo e restauração validada; antes da correção de schema da Shopee foi criado dump recuperável da base existente.
 
 ## Autenticação de staging
 
-- O gateway usa o Hub `https://paymentcontrol.davantti-suite.workers.dev` como autoridade de acesso.
+- O gateway usa `https://hub.dachbyte.tech` como autoridade de acesso.
 - Os masters de ML, Shopee, Rastreio e Volt Core têm acesso restrito ao respectivo módulo no Hub.
 - O Volt Core usa as variáveis `VOLT_CORE_BOOTSTRAP_MASTER_ENABLED`, `VOLT_CORE_BOOTSTRAP_MASTER_EMAIL`, `VOLT_CORE_BOOTSTRAP_MASTER_NAME` e `VOLT_CORE_BOOTSTRAP_MASTER_PASSWORD`; valores ficam somente no ambiente da VPS.
 - Em 13/09/2026, todos os ambientes de módulos que ainda usavam o Hub legado foram alinhados para `HUB_BASE_URL=https://paymentcontrol.davantti-suite.workers.dev`; 14 serviços foram recriados e ficaram saudáveis.
@@ -51,6 +52,16 @@ status: staging-ativo
 4. Fazer a revisão visual e responsiva das novas landings Seller e acompanhar conversão antes de aumentar o conteúdo.
 5. Automatizar o deploy de `dachbyte/main` com smoke tests e rollback.
 6. Somente em etapa aprovada: DNS e tráfego de produção, callbacks OAuth produtivos e monitoramento de tráfego.
+
+## Estado operacional — 01/10/2026
+
+- Checkout DACHBYTE na VPS: `/opt/dachbyte/repository`, `main` em `d0ea2265`.
+- Checkout separado do Hub: `/opt/dachbyte/hub-pagamento`, `main` em `b83c1ad`.
+- Serviços saudáveis verificados: Gateway, Ads API/worker, Business Portal/Core/Stock/Price/Chat, Seller ML/Shopee/Tracking/Magalu/Madeira/Leader/Log, PostgreSQL, Redis e Caddy.
+- Bancos locais: `dachbyte_ads`, `dachbyte_chat`, `dachbyte_core`, `dachbyte_hub`, `dachbyte_leader`, `dachbyte_log`, `dachbyte_madeira`, `dachbyte_ml`, `dachbyte_price`, `dachbyte_shopee`, `dachbyte_stock`, `dachbyte_suite` e `dachbyte_tracking`.
+- `hub-web` saudável; `hub-scheduler` ativo após o commit `b83c1ad`, sem reinicializações na validação.
+- Webhook Asaas migrado para `hub.dachbyte.tech`, ativo e alinhado aos seis eventos suportados.
+- Permanecem arquivos de backup de ambientes não versionados na VPS. Não removê-los sem confirmar retenção e cópia segura.
 
 ## Bloqueado até aprovação específica
 
