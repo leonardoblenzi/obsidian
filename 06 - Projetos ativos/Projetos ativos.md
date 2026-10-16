@@ -12,3 +12,4 @@ type: indice
 - [[Atualização de produção, seleção Seller e DACH Ads — 2026-09-21]]
 - [[DACH Ads — estado operacional — 2026-09-21]]
 - [[DACH Ads — Meta, páginas legais e identidade visual — 2026-09-21]]
+- [[Seller Magalu — Etapas 6 a 8 e publicação pendente — 2026-09-25]]

@@ -18,6 +18,7 @@ updated: 2026-10-01
 - PostgreSQL e Redis permanecem na rede Docker privada.
 - As bases de staging são PostgreSQL interno na VPS e usam os nomes `dachbyte_*` sem sufixo `_staging`; o isolamento é feito pela stack e ambientes de staging, não pelo nome do banco.
 - O Hub também está na VPS desde 27/09/2026, em `https://hub.dachbyte.tech`, com banco local `dachbyte_hub`. Worker Cloudflare e Neon permanecem apenas como histórico/possível fonte de reconciliação.
+- Em 25/09/2026, antes do corte, o Worker Cloudflare ainda estava ativo. Consulte [[Migração do Hub Cloudflare para VPS — 2026-09-25]] para esse histórico.
 - O plano inclui backup externo e restauração validada; antes da correção de schema da Shopee foi criado dump recuperável da base existente.
 
 ## Autenticação de staging
@@ -87,3 +88,10 @@ Fonte: `README-VPS.md` e `docs/operations/dachbyte-vps-staging-runbook.md`.
 - Decisão atual: adiar a configuração do backup externo para não bloquear a publicação solicitada. O deploy da migration `071` seguirá por exceção consciente, sem um backup Restic novo imediatamente anterior.
 - Configuração pendente recomendada: bucket privado Cloudflare R2 `dachbyte-backups-prod`, `RESTIC_REPOSITORY=s3:https://<account-id>.r2.cloudflarestorage.com/dachbyte-backups-prod`, senha Restic gerada e guardada em cofre, `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` limitadas ao bucket. Depois, inicializar com `docker compose --env-file ./env/compose.env -f compose.vps.yml -f compose.backup.yml --profile backup run --rm --entrypoint restic backup init`, executar `./business-db-ops.sh backup` e testar restauração.
 - Publicação executada em 22/09/2026: checkout da VPS atualizado para `acac9ac`; a migration `071_add_company_deletion_audit_scope.sql` foi confirmada em `ml.migracoes`, com `ml.auth_audit.empresa_id`, `ml.auth_audit.meli_conta_id` e `ml.company_deletion_receipts` presentes. `seller-ml-web` e `seller-ml-worker` foram recriados e ficaram `healthy`; smoke checks `https://dachbyte.tech/healthz` e `https://dachbyte.tech/ml/health` retornaram `ok`.
+
+## Seller Magalu — publicação concluída (25/09/2026)
+
+- A `main` no commit `e759b25` foi publicada com as Etapas 6–8 do Magalu; validação local: 158/158 testes aprovados.
+- Migrations `006` a `010` aplicadas sem pendências. `seller-magalu-web` e `seller-magalu-worker` foram reconstruídos/recriados e estão `healthy`.
+- Smoke tests `https://dachbyte.tech/healthz` e `https://dachbyte.tech/magalu/health` retornaram HTTP 200. O worker carregou as filas de auditoria, SKU, pedidos e expedição.
+- A chave de deploy confirmada usa `root@177.7.52.6`; o IP anterior tinha um dígito incorreto. Detalhes e próximos testes em [[Seller Magalu — Etapas 6 a 8 e publicação pendente — 2026-09-25]].

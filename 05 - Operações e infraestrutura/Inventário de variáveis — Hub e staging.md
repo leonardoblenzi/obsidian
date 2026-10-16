@@ -12,6 +12,8 @@ Esta nota registra **nomes, arquivo/ambiente e responsabilidade**. Nunca registr
 
 ## Hub Cloudflare: Worker `paymentcontrol`
 
+> Histórico de 25/09/2026: o Worker permanecia ativo até o cutover. A configuração do Hub VPS é privada em `infra/env/hub-runtime.env`; não registrar valores aqui. Ver [[Migração do Hub Cloudflare para VPS — 2026-09-25]].
+
 | Variável | Tipo | Responsabilidade |
 | --- | --- | --- |
 | `NEON_DATABASE_URL` | secret | Conexão do Hub com a branch Neon `paymentcontrol-pilot-20260910`. Atualizada em 13/09/2026 e publicada na versão Cloudflare `c6b67479`. |
@@ -24,6 +26,20 @@ Esta nota registra **nomes, arquivo/ambiente e responsabilidade**. Nunca registr
 | `ADMIN_BASE_PATH`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_PASSWORD_SALT`, `ADMIN_SESSION_SECRET` | variável/secrets | Portal administrativo em `/ops-portal`; não são as credenciais globais dos usuários de módulos. |
 | `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` | secrets | Entrega de e-mails, inclusive fluxo de identidade/recuperação. |
 | `RENEWAL_INTENT_SECRET` | secret | Assinatura de intenções de renovação. |
+
+## Histórico: preparação do Hub VPS antes do corte
+
+| Arquivo/variável | Responsabilidade | Estado |
+| --- | --- | --- |
+| `infra/env/hub-runtime.env` | Runtime do Hub. Contém banco local futuro, URL pública, token interno, acesso administrativo, Asaas, Brevo e integrações. | Arquivo criado com modo `600`; Hub ainda não iniciado. |
+| `HUB_DATABASE_URL` | Conexão privada do Hub para o banco local `dachbyte_hub`. | Preparado; banco ainda não recebeu restore final. |
+| `HUB_PUBLIC_BASE_URL` | URL do Hub VPS. | `https://hub.dachbyte.tech`; DNS autoritativo aponta para a VPS. |
+| `HUB_ACCESS_ENFORCEMENT_MODE` | Aplicação da política pelo Hub. | `strict`. |
+| `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN` | Comunicação e validação de webhook Asaas. | Configurados somente no arquivo protegido. |
+| `RENEWAL_INTENT_SECRET` | Assinatura de intents do Hub VPS. | Nova chave gerada no VPS; revisar intents pendentes antes do corte. |
+| `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` | E-mails transacionais. | Pendentes até a autenticação do novo domínio. |
+| `infra/env/hub-migrate.env` | Target da migration do Hub. | Preparado; não executado. |
+| `infra/env/hub-cutover.env` | Fonte Neon, destino, webhook e confirmações do corte. | Preparado; confirmações permanecem `NO`. |
 
 ## Integração comum na VPS
 

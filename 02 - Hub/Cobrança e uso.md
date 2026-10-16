@@ -1,7 +1,7 @@
 ---
 type: arquitetura
 area: hub
-updated: 2026-10-01
+updated: 2026-10-16
 ---
 
 # Cobrança e uso
@@ -27,6 +27,7 @@ updated: 2026-10-01
 
 - [[Hub]]
 - [[Davantti e Dachbyte]]
+- [[Créditos ML — estado e validação — 2026-10-16]]
 
 ## A validar
 
