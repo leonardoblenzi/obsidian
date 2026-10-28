@@ -1,21 +1,42 @@
 ---
 type: handoff
 area: hub-seller
-status: pronto-para-deploy-controlado
-updated: 2026-10-23
+status: integrado-pendente-validacao-ponta-a-ponta
+updated: 2026-10-28
 repository: hubPagamentos
 branch: main
 commit_preparado: b1dc24d
+commit_dach_integrado: 7d84790
 ---
 
 # Handoff — Hub Seller, trial e créditos — 23/10/2026
 
 ## Leitura rápida
 
+- Atualização de 28/10: Dach integrado e enviado para `origin/main` em `7d84790`, incluindo o commit funcional `5c3778c` e os commits anteriores de trial/pós-pago. Nenhum deploy ou migration foi executado nessa integração.
 - O novo estado está enviado para `origin/main` do Hub no commit `b1dc24d` (`feat: prepare seller trial billing and credit pricing`).
 - **Este commit não foi deployado, nenhuma migration foi aplicada e nenhum saldo, contrato ou recurso foi alterado nesta etapa.**
 - O último baseline de produção documentado para créditos ML é a nota [[Créditos ML — estado e validação — 2026-10-16]]: Hub em `26dcf21d`, matriz `price_matrix_sellers_2026_ml_prepaid`, migration 063 aplicada e 26 operações ML com `enforce_ready=true`.
 - Antes de qualquer deploy, confirmar no checkout da VPS o SHA realmente ativo. A nota de 16/10 é referência documentada, não substitui essa verificação.
+
+## Implementado, testado e publicado — posição em 28/10
+
+| Componente | Implementado e enviado ao GitHub | Evidência de testes | Publicação em produção |
+| --- | --- | --- | --- |
+| Hub | `main`, `b1dc24d`: catálogo, medição como autoridade, portal e faturas | TypeScript; checkout 766/766; testes focados 29/29; migrations 29/29, executados na preparação anterior | Deploy desse conjunto não realizado neste chat; SHA ativo na VPS precisa ser consultado |
+| Dach | `main`, `7d84790`: integração do conjunto Seller, incluindo `5c3778c` | Após merge: Seller 50/50 e arquitetura 29/29 | Não deployado nesta etapa |
+| Catálogo/migration 065 | SQL versionado no Hub | Testes locais de contrato da migration | Aplicação pendente conforme último registro; banco não consultado em 28/10 |
+| Jornada pós-paga completa | Serviços e interfaces implementados | Testes locais de partes do fluxo | Ensaio integrado com Asaas, corte por vencimento e desbloqueio ainda pendente |
+
+Push para `main` não significa deploy. Não tratar a nota histórica de produção de 16/10 como verificação atual da VPS. Nesta atualização, não houve consulta de containers, banco, flags ou revisões em execução.
+
+### Integração do Dach
+
+O merge `7d84790` incorporou `origin/main` sem conflitos e sem alteração do conteúdo em relação ao primeiro pai local. As duas correções da calculadora existiam nos dois históricos como patches equivalentes com hashes diferentes. A interpretação anterior de que houve uma reversão remota de aproximadamente seis mil linhas estava incorreta: aquela diferença representava código local ainda não enviado.
+
+O conjunto integrado inclui OAuth e retorno à Seleção de plataforma, medição do último mês fechado em ML/Shopee, entrega da medição ao Hub, proposta com preço definido pelo servidor, edição de nome da conta, avisos de preço, desativação de assinatura e listagem de faturas. Backups, outputs, scripts auxiliares e rascunhos não rastreados ficaram preservados fora do commit.
+
+Os 50 testes específicos cobrem OAuth/relink, medição, destino pós-OAuth, contratação sem campos de preço editáveis e identidade confiável no gateway. Os 29 testes de arquitetura passaram com loopback local permitido. Esses testes não substituem uma jornada real de pagamento nem uma validação visual em navegador.
 
 ## O que entrou em `b1dc24d`
 
@@ -101,6 +122,10 @@ Também entrou:
 - `git diff --check`: sem erro de whitespace.
 
 ## Próxima sequência segura
+
+Antes de publicar, concluir o ensaio integrado em ambiente de teste: duas contas na mesma empresa → medição → proposta → aceite → acesso → proporcional e fatura consolidada → vencimento sem pagamento → módulos bloqueados e portal acessível → webhook pago → desbloqueio. Cobrir webhook duplicado, retry e reativação sem novo trial. Conferir o catálogo de créditos separadamente da mensalidade pós-paga.
+
+A sequência de produção abaixo depende dessa validação e de autorização de deploy; a instrução vigente em 28/10 foi integrar a main **sem deploy**. Incluir o Dach `7d84790` no planejamento de publicação junto ao Hub e levantar todas as migrations pendentes de ambos os repositórios, não apenas a 065.
 
 1. Na VPS, verificar SHA do checkout do Hub, saúde de `hub-web` e migrations pendentes antes de agir.
 2. Fazer deploy do commit `b1dc24d` **sem habilitar flags pós-pagas**.
